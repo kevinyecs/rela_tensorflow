@@ -1,2 +1,2 @@
-from rela_tensorflow.rela_tensorflow import ReLATransformer, ReLA
+from rela_tensorflow.rela import ReLATransformer, ReLA
 from rela_tensorflow.autoregressive_wrapper import AutoregressiveWrapper
