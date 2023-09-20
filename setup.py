@@ -15,7 +15,7 @@ setup(
         'deep learning',
         'transformers',
         'attention mechanism',
-        'rectified attention unit'
+        'rectified linear attention'
     ],
     install_requires = [
         'tensorflow>=2.13.0',
