@@ -19,7 +19,6 @@ Paper implementation of ReLA (https://github.com/bzhangGo/zero/blob/master/modul
 Pytorch implementation of ReLA (https://github.com/lucidrains/rela-transformer)
 '''
 
-
 class GatedRMSNorm(Layer):
     """
     Gated Root Mean Square Layer Normalization (GatedRMSNorm)
@@ -48,7 +47,6 @@ class GatedRMSNorm(Layer):
         d = x_shape[-1]
 
         ## gain parameter (g)
-        scale_init = tf.math.sqrt(3 / d)
         self.scale = self.add_weight(
             name = 'scale',
             shape = (1, d),
@@ -70,7 +68,6 @@ class GatedRMSNorm(Layer):
         rms = self.scale * x * tf.math.rsqrt(ms + self.eps) + self.offset
         return tf.nn.sigmoid(x * self.w) * rms
     
-
 class ReLA(Layer):
     """
     Rectified Linear Attention (ReLA)
@@ -81,11 +78,12 @@ class ReLA(Layer):
     References:
     https://arxiv.org/pdf/1907.01470.pdf (memory)
     """
+    
     def __init__(self,
                  causal : bool = True,
                  qkv_dim : int = 64,
                  n_heads : int = 8,
-                 relu_squared : bool = True,
+                 relu_squared : bool = False,
                  **kwargs):
         super().__init__(**kwargs)
         self.causal = causal
@@ -109,9 +107,7 @@ class ReLA(Layer):
         x = self.norm(x)
 
         qkv = tf.reshape(self.to_qkv(x), [3, b, self.n_heads, n, self.qkv_dim // self.n_heads])
-        q, k, v = tf.map_fn(
-            fn = lambda x : tf.reshape(x, [b, self.n_heads, n, self.qkv_dim // self.n_heads]),
-            elems = qkv)
+        q, k, v = tf.unstack(qkv, axis = 1)
 
         a = tf.einsum('...nd, ...md -> ...nm', q, k) / n
         a = tf.nn.relu(a)
@@ -128,6 +124,7 @@ class ReLA(Layer):
 
         x = tf.reshape(out, [b, n, self.qkv_dim])
         return self.to_out(x)
+
 class PositionEmbedding(tf.keras.layers.Layer):
   """Creates a positional embedding.
 
@@ -194,7 +191,6 @@ def FeedForward(dim, mult=4):
     ff_layer.add(Dense(dim))
 
     return ff_layer
-
 
 class ReLATransformer(Layer):
     def __init__(
