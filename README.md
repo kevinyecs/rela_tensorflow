@@ -2,7 +2,8 @@
 Rectified Linear Attention (TensorFlow implementation) from the paper [Sparse Attention with Linear Units](https://arxiv.org/pdf/2104.07012.pdf)
 
 ## Roadmap
-- [ ] ReLA module, Transformer Model
+- [ ] Pre-Training file and Fine-Tune file
+- [ ] HF repo
 
 > [!WARNING]
 > This repository is under developemnt, but please feel free to explore and provide any feedback or suggestions you may have. :construction:
